@@ -1,0 +1,28 @@
+name: Dagger CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  dagger:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: "1.25"
+
+      - name: Install Dagger
+        run: |
+          curl -L https://dl.dagger.io/dagger/install.sh | sh
+          sudo mv bin/dagger /usr/local/bin
+
+      - name: Run Dagger pipeline
+        env:
+          DAGGER_CLOUD_TOKEN: ${{ secrets.DAGGER_CLOUD_TOKEN }}
+        run: |
+          cd ci
+          go run .
